@@ -4,7 +4,8 @@ const state = {
     currentSessionId: null,
     loading: false,
     mode: 'SKILL',
-    agentAvailable: false
+    agentAvailable: false,
+    modelConfigured: false
 };
 
 const elements = {
@@ -56,14 +57,25 @@ async function bootstrap() {
         state.sessions = payload.sessions || [];
         state.skills = payload.skills || [];
         state.agentAvailable = Boolean(payload.agentAvailable);
+        state.modelConfigured = Boolean(payload.modelConfigured);
         renderSessions();
         renderSkills();
-        elements.modelDot.className = `status-dot ${payload.modelConfigured ? 'ready' : 'error'}`;
-        elements.modelStatus.textContent = payload.modelConfigured ? '模型已连接' : '模型未配置';
+        const capabilityReady = state.modelConfigured || state.agentAvailable;
+        elements.modelDot.className = `status-dot ${capabilityReady ? 'ready' : 'error'}`;
+        elements.modelStatus.textContent = state.modelConfigured
+            ? '对话模型已连接'
+            : state.agentAvailable ? 'Cursor Agent 已连接' : '服务未配置';
+        elements.skillMode.disabled = !state.modelConfigured;
+        elements.skillMode.title = state.modelConfigured
+            ? '使用模型自动匹配 Skill'
+            : '尚未配置普通对话模型，请使用 Agent';
         elements.agentMode.disabled = !state.agentAvailable;
         elements.agentMode.title = state.agentAvailable
             ? '交给 Cursor Cloud Agent 执行研发任务'
             : '服务端尚未配置 CURSOR_API_KEY';
+        if (!state.modelConfigured && state.agentAvailable) {
+            setMode('AGENT');
+        }
     } catch (error) {
         elements.modelDot.className = 'status-dot error';
         elements.modelStatus.textContent = '服务不可用';
@@ -331,6 +343,10 @@ function closeSidebar() {
 }
 
 function setMode(mode) {
+    if (mode === 'SKILL' && !state.modelConfigured) {
+        showError('普通 Skill 对话模型尚未配置，请使用 Cursor Agent。');
+        return;
+    }
     if (mode === 'AGENT' && !state.agentAvailable) {
         showError('Cursor Agent 尚未配置，请在服务端设置 CURSOR_API_KEY。');
         return;
