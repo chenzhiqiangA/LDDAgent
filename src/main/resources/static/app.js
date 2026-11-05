@@ -196,7 +196,10 @@ async function sendMessage(text) {
         });
         typingNode.remove();
         state.currentSessionId = reply.sessionId;
-        appendMessage('assistant', reply.content, reply.capabilityName);
+        const matchedSkill = reply.automatic
+            ? `自动匹配 · ${reply.capabilityName}`
+            : reply.capabilityName;
+        appendMessage('assistant', reply.content, matchedSkill);
         await refreshSessions();
         scrollToBottom();
     } catch (error) {

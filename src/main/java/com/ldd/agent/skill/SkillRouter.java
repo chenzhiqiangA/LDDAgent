@@ -59,6 +59,8 @@ public class SkillRouter {
                 .collect(Collectors.joining("\n"));
         String systemPrompt = """
                 你是 Skill 路由器。结合最近对话上下文和用户本轮请求，从候选 Skill 中选择唯一最匹配的一项。
+                优先选择能直接处理该请求的专用 Skill；只有没有任何专用 Skill 匹配时才选择通用 Skill。
+                只根据用户想完成的任务进行选择，不要尝试回答任务本身。
                 只能返回 Skill id，不要解释，不要输出 Markdown。
 
                 候选 Skill：

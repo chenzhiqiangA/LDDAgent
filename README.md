@@ -2,6 +2,15 @@
 
 一个可扩展的多 Skill 对话应用。当前版本包含模型自动路由、手动 Skill 选择、MySQL 会话历史、Redis 路由缓存和响应式聊天页面，并为 Agent 能力保留了独立模式。
 
+当前内置 Skill：
+
+- `table-creator`：根据业务描述设计 MySQL 表并输出建表 DDL。
+- `task-api-extractor`：从任务文档定位指定接口并严格转换为指定格式。
+- `sql-assistant`：处理已有表的 SQL 编写、查询和性能优化。
+- `general-assistant`：承接不属于专业 Skill 的通用请求。
+
+页面保持“自动匹配”时，服务端会把最近对话、当前输入和 Skill 的 `description`、`examples` 一并交给模型，只返回一个 Skill id；选中 Skill 后，再使用该 Skill 的 `systemPrompt` 生成正式回答。也可以在下拉框中手动指定 Skill。
+
 ## 启动配置
 
 MySQL 和 Redis 连接位于 `src/main/resources/application.properties`。应用启动时会通过 `schema.sql` 自动创建会话表。本地密码可以放在被 Git 忽略的 `src/main/resources/application-local.properties`，部署环境建议使用 `DB_URL`、`DB_USERNAME` 和 `DB_PASSWORD` 环境变量。
@@ -16,6 +25,8 @@ MODEL_CHAT_PATH=/chat/completions
 ```
 
 其中 `MODEL_NAME` 必填；不需要鉴权的本地模型可以不设置 `MODEL_API_KEY`。
+
+Cursor User API Key 只能调用 Cursor Cloud Agent，不能作为普通对话模型的 `MODEL_API_KEY`。如果没有配置普通模型，Agent 模式仍然可用，但 Skill 自动匹配和 Skill 回答不可用。
 
 启动后访问 `http://localhost:8080/`。
 
