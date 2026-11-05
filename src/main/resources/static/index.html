@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>LDD Skill Console</title>
+    <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand-row">
+            <div class="brand-mark" aria-hidden="true">L</div>
+            <div>
+                <strong>LDD Console</strong>
+                <span>Skill workspace</span>
+            </div>
+            <button class="icon-button mobile-only" id="closeSidebar" type="button" title="关闭侧栏" aria-label="关闭侧栏">×</button>
+        </div>
+
+        <button class="new-chat-button" id="newChat" type="button">
+            <span aria-hidden="true">+</span>
+            <span>新对话</span>
+        </button>
+
+        <div class="sidebar-label">最近对话</div>
+        <nav class="session-list" id="sessionList" aria-label="历史会话"></nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot" id="modelDot" aria-hidden="true"></span>
+            <span id="modelStatus">正在连接</span>
+        </div>
+    </aside>
+
+    <main class="workspace">
+        <header class="topbar">
+            <button class="icon-button mobile-only" id="openSidebar" type="button" title="打开侧栏" aria-label="打开侧栏">☰</button>
+
+            <div class="mode-control" aria-label="能力模式">
+                <button class="mode-button active" id="skillMode" type="button" aria-pressed="true">Skill</button>
+                <button class="mode-button" id="agentMode" type="button" aria-pressed="false">Agent</button>
+            </div>
+
+            <label class="skill-picker">
+                <span>调用</span>
+                <select id="skillSelect" aria-label="选择 Skill">
+                    <option value="">自动匹配</option>
+                </select>
+            </label>
+        </header>
+
+        <section class="conversation" id="conversation" aria-live="polite">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-mark" aria-hidden="true">L</div>
+                <h1>今天要处理什么？</h1>
+                <div class="prompt-grid">
+                    <button class="prompt-chip" type="button">设计一张订单表</button>
+                    <button class="prompt-chip" type="button">整理一份项目周报</button>
+                    <button class="prompt-chip" type="button">优化一条慢 SQL</button>
+                </div>
+            </div>
+            <div class="message-list" id="messageList"></div>
+        </section>
+
+        <div class="composer-area">
+            <div class="error-banner" id="errorBanner" role="alert" hidden></div>
+            <div class="agent-options" id="agentOptions" hidden>
+                <div class="agent-options-heading">
+                    <div>
+                        <strong>Cursor Cloud Agent</strong>
+                        <span>任务会在 Cursor 云端执行，并在仓库中创建分支。</span>
+                    </div>
+                    <span class="agent-security-note">密钥仅保存在服务端</span>
+                </div>
+                <div class="agent-fields">
+                    <label>仓库地址<input id="repoUrl" type="url" placeholder="https://github.com/org/repo"></label>
+                    <label>起始分支<input id="startingRef" type="text" value="main" placeholder="main"></label>
+                    <label class="checkbox-field"><input id="autoCreatePr" type="checkbox" checked> 完成后自动创建 PR</label>
+                </div>
+            </div>
+            <form class="composer" id="composer">
+                <textarea id="messageInput" rows="1" maxlength="10000" placeholder="输入消息" aria-label="消息内容"></textarea>
+                <button class="send-button" id="sendButton" type="submit" title="发送" aria-label="发送消息">↑</button>
+            </form>
+        </div>
+    </main>
+</div>
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<script src="/app.js" defer></script>
+</body>
+</html>
